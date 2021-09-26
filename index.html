@@ -29,6 +29,9 @@
                     );
                 }, 5 * 60 * 1000);
             };
+            ws.onmessage((msg) => {
+                console.log(msg)
+            })
         </script>
     </head>
 
