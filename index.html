@@ -1,0 +1,39 @@
+<html>
+
+    <head>
+        <!-- CSS only -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+        <!-- JavaScript Bundle with Popper -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ"
+            crossorigin="anonymous"></script>
+        <script>
+            const wsUrl = 'wss://websocket.ericbetts.dev';
+            const hookUrl = 'https://sockethook.ericbetts.dev/hook';
+
+            const ws = new WebSocket(wsUrl);
+            ws.onopen = event => {
+                ws.send(
+                    JSON.stringify({
+                        action: 'subscribe',
+                        key: '2a97516c354b68848cdbd8f54a226a0a55b21ed138e207ad6c5cbb9c00aa5aea', //path: 'demo'
+                    }),
+                );
+                setInterval(() => {
+                    ws.send(
+                        JSON.stringify({
+                            action: 'echo',
+                            value: new Date().getTime(),
+                        }),
+                    );
+                }, 5 * 60 * 1000);
+            };
+        </script>
+    </head>
+
+    <body>
+
+    </body>
+
+</html>
