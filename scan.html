@@ -1,0 +1,52 @@
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+button {
+    width: 100%;
+    height: 100%;
+}
+</style>
+<script>
+    var server = location.search.split('server=')[1]
+
+    function sendRequest(body, path) {
+        fetch(`https://sockethook.ericbetts.dev/hook/${path}`, {
+            method: "POST",
+            body: JSON.stringify(body),
+            mode: 'no-cors'
+        }).then(res => {
+            console.log("Request complete! response:", res);
+        });
+    }
+    function log(data) {
+        sendRequest(data, "demo")
+    }
+
+    document.addEventListener("DOMContentLoaded", async function (event) {
+        log("Page loaded");
+        document.querySelector("#scanButton").onclick = async () => {
+            try {
+                const ndef = new NDEFReader();
+                await ndef.scan();
+                log("> Scan started");
+                document.querySelector("#scanButton").style.display = 'none';
+
+                ndef.addEventListener("readingerror", () => {
+                    log("Argh! Cannot read data from the NFC tag. Try another one?");
+                });
+
+                ndef.addEventListener("reading", ({ message, serialNumber }) => {
+                    let CSN = serialNumber.split(":").join("")
+                    sendRequest({uid: CSN, status: "ok"},server)
+                    log(`> Serial Number: ${serialNumber}`);
+                    log(`> Records: (${message.records.length})`);
+                });
+            } catch (error) {
+                log("Argh! " + error);
+            }
+        }
+    });
+
+</script>
+<body>
+    <button id="scanButton">Scan</button>
+</body>
